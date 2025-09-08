@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Freelancer Application</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .form-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border: 1px solid #d1d5db;
+            background-color: #f9fafb;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+        }
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .submit-button {
+            width: 100%;
+            padding: 1rem;
+            background-color: #2563eb;
+            color: #ffffff;
+            font-weight: 700;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .submit-button:hover {
+            background-color: #1d4ed8;
+        }
+
+        /* Modal styling */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 100; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #ffffff;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+        }
+        .close-button {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: #000;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div class="form-container">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-2">Freelancer Application</h1>
+        <p class="text-center text-gray-600 mb-8">Please fill out this form to apply for a position on our team.</p>
+
+        <form id="applicationForm" class="space-y-6">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" placeholder="Your full name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="designation">Designation</label>
+                <input type="text" id="designation" name="designation" placeholder="e.g., Senior Developer, Digital Marketing Specialist" required>
+            </div>
+
+            <div class="form-group">
+                <label for="appliedFor">Applied For</label>
+                <select id="appliedFor" name="appliedFor" required>
+                    <option value="" disabled selected>Select an option</option>
+                    <option value="nextjs">Next.js Developer</option>
+                    <option value="nodejs">Node.js Developer</option>
+                    <option value="digital-marketer">Digital Marketer</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="workSample">Work Sample (Link)</label>
+                <input type="url" id="workSample" name="workSample" placeholder="Link to your portfolio or relevant work" required>
+            </div>
+
+            <div class="form-group">
+                <label for="rate">How much do you charge?</label>
+                <input type="text" id="rate" name="rate" placeholder="e.g., $50/hour, $2,000/project" required>
+            </div>
+
+            <div class="form-group">
+                <label for="proposal">Proposal</label>
+                <textarea id="proposal" name="proposal" placeholder="Briefly describe what you can bring to our team" rows="4" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="about">Tell me about yourself in brief</label>
+                <textarea id="about" name="about" placeholder="A short bio about your skills and experience" rows="4" required></textarea>
+            </div>
+
+            <button type="submit" class="submit-button">Submit Application</button>
+        </form>
+    </div>
+
+    <!-- Modal for confirmation -->
+    <div id="confirmationModal" class="modal">
+      <div class="modal-content">
+        <span class="close-button" onclick="document.getElementById('confirmationModal').style.display='none'">&times;</span>
+        <h2 class="text-2xl font-bold mb-4">Application Submitted!</h2>
+        <p>Thank you for your interest in joining our team. We have received your application and will be in touch shortly.</p>
+      </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('applicationForm');
+        const modal = document.getElementById('confirmationModal');
+
+        form.addEventListener('submit', function(event) {
+            // Prevent the default form submission
+            event.preventDefault();
+
+            // Here, you would typically collect the form data
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            // For this example, we'll just log the data to the console
+            // In a real application, you would send this to a server
+            console.log('Form data submitted:', data);
+
+            // Display the confirmation modal
+            modal.style.display = 'flex';
+        });
+    </script>
+</body>
+</html>
